@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const Author = require('../models/authors')
+const { findById } = require('../models/books')
+const Books = require('../models/books')
+
 
 router.get('/', async (req, res) => {
     let searchOptions = {}
@@ -37,10 +40,70 @@ router.post('/', (req, res) => {
             })
         }
         else {
-            // res.redirect(`authors/${newAuthor.id}`)
-            res.redirect('authors')
+            res.redirect(`authors/${newAuthor.id}`)
         }
     })
 })
 
+router.get('/:id', async (req, res) => {
+
+    try{
+        const author = await Author.findById(req.params.id)
+        const books = await Books.find({author : author.id}).exec()
+        res.render('authors/show',{
+            author:author,
+            bookByAuthor:books
+        })
+    }catch{
+        res.redirect('/')
+    }
+})
+
+router.get('/:id/edit', async (req, res) => {
+    try {
+        let author = await Author.findById(req.params.id)
+        res.render('authors/update', { author: author })
+    }
+    catch {
+        res.redirect('authors')
+    }
+})
+
+router.put('/:id', async (req, res) => {
+    let author
+    try {
+        author = await Author.findById(req.params.id)
+        author.name = req.body.name;
+        await author.save()
+        res.redirect(`/authors/${author.id}`)
+    }
+    catch {
+        if (author == null) {
+            res.redirect('/')
+        } else {
+            res.render('authors/update', {
+                author: author,
+                errorMessage: 'Error updating Author'
+            })
+        }
+
+    }
+})
+
+router.delete('/:id', async (req, res) => {
+    let author
+    try {
+        author = await Author.findById(req.params.id)
+        await author.remove()
+        res.redirect(`/authors`)
+    }
+    catch {
+        if (author == null) {
+            res.redirect('/')
+        } else {
+            res.redirect(`/authors/${author.id}`)
+        }
+
+    }
+})
 module.exports = router

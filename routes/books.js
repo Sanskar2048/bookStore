@@ -27,7 +27,6 @@ router.get('/', async (req, res) => {
     }
     try{
         const books= await query.exec()
-        console.log(books[0].Coverpa)
         res.render('books/index',{
                 books:books,
                 searchOptions: req.query
