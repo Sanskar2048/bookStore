@@ -96,8 +96,10 @@ router.put('/:id', upload.single('cover'), async (req, res) => {
         book.publishDate= new Date(req.body.publishDate)
         book.pageCount= req.body.pageCount
         book.description= req.body.description
-        removeBookCover(book.CoverImageName)
-        book.CoverImageName= fileName
+        if(req.body.cover != null && req.body.cover !== ''){
+            removeBookCover(book.CoverImageName)
+            book.CoverImageName= fileName
+        }
         await book.save()
         res.redirect(`/books/${book.id}`)
     } catch {
