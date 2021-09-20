@@ -8,6 +8,7 @@ router.get('/', async (req, res) => {
         books = await Book.find({}).sort({ createAt: 'desc'}).limit(10).exec()
     }
     catch{
+        res.redirect('/');
     }
     res.render('index', {books : books})
 })

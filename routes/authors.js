@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const Author = require('../models/authors')
-const { findById } = require('../models/books')
 const Books = require('../models/books')
 
 
